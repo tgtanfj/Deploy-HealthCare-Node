@@ -5,7 +5,7 @@ import CRUDservice from '../services/CRUDservice'
 let getHomePage = async (req, res) => {
     try {
         let data = await db.User.findAll()
-        return res.render('homepage.ejs', {
+        return res.render('homePage.ejs', {
             data: JSON.stringify(data)
         });
     }catch(e) {
