@@ -9,7 +9,7 @@ let createNewSpecialty = (data) => {
                     errMessage: 'Missing parameter!'
                 })
             } else {
-                await db.Specialty.create({
+                await db.Specialties.create({
                     name: data.name,
                     image: data.imageBase64,
                     descriptionHTML: data.descriptionHTML,
@@ -30,7 +30,7 @@ let createNewSpecialty = (data) => {
 let getAllSpecialty = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await db.Specialty.findAll()
+            let data = await db.Specialties.findAll()
             if (data && data.length) {
                 data.map(item => {
                     item.image = new Buffer(item.image, 'base64').toString('binary')
@@ -59,7 +59,7 @@ let getDetailSpecialtyById = (inputId, location) => {
                 })
             } else {
                 //find doctor location = ALL
-                let data = await db.Specialty.findOne({
+                let data = await db.Specialties.findOne({
                     where: {
                         id: inputId
                     },
