@@ -228,7 +228,7 @@ let bulkCreateSchedule = (data) => {
                     })
                 }
 
-                let existing = await db.Schedule.findAll(
+                let existing = await db.Schedules.findAll(
                     {
                         where: { doctorId: data.doctorId, date: data.formatedDate },
                         attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
@@ -243,7 +243,7 @@ let bulkCreateSchedule = (data) => {
 
                 //create data
                 if (toCreate && toCreate.length > 0) {
-                    await db.Schedule.bulkCreate(toCreate)
+                    await db.Schedules.bulkCreate(toCreate)
                 }
 
                 resolve({
@@ -268,7 +268,7 @@ let getScheduleByDate = (doctorId, date) => {
                     errMessage: 'Missing required parameter!'
                 })
             } else {
-                let data = await db.Schedule.findAll({
+                let data = await db.Schedules.findAll({
                     where: {
                         doctorId: doctorId,
                         date: date
