@@ -30,7 +30,7 @@ let postBookAppointment = (data) => {
                     redirectLink: buildUrlEmail(data.doctorId, token),
                 })
 
-                let user = await db.Users.findOrCreate({
+                let user = await db.User.findOrCreate({
                     where: { email: data.email },
                     defaults: {
                         email: data.email,
@@ -41,7 +41,7 @@ let postBookAppointment = (data) => {
                     }
                 })
                 if (user && user[0]) {
-                    await db.Bookings.findOrCreate({
+                    await db.Booking.findOrCreate({
                         where: { patientId: user[0].id },
                         defaults: {
                             statusId: 'S1',
@@ -74,7 +74,7 @@ let postVerifyBookAppointment = (data) => {
                     errMessage: 'Missing parameter!'
                 })
             } else {
-                let appointment = await db.Bookings.findOne({
+                let appointment = await db.Booking.findOne({
                     where: {
                         doctorId: data.doctorId,
                         token: data.token,

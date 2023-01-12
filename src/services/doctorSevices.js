@@ -9,7 +9,7 @@ const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let users = await db.Users.findAll({
+            let users = await db.User.findAll({
                 limit: limitInput,
                 where: { roleId: 'R2' },
                 order: [['createdAt', "DESC"]],
@@ -17,8 +17,8 @@ let getTopDoctorHome = (limitInput) => {
                     exclude: ['password']
                 },
                 include: [
-                    { model: db.Allcodes, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
-                    { model: db.Allcodes, as: 'genderData', attributes: ['valueEn', 'valueVi'] }
+                    { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                    { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] }
                 ],
                 raw: true,
                 nest: true
@@ -37,7 +37,7 @@ let getTopDoctorHome = (limitInput) => {
 let getAllDoctors = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let doctors = await db.Users.findAll({
+            let doctors = await db.User.findAll({
                 where: { roleId: 'R2' },
                 attributes: {
                     exclude: ['password', 'image']
@@ -86,16 +86,16 @@ let saveDetailInfoDoctor = (inputData) => {
                     errMessage: `Missing parameter: ${checkObj.element}`
                 })
             } else {
-                //upsert to Markdowns
+                //upsert to Markdown
                 if (inputData.action === 'CREATE') {
-                    await db.Markdowns.create({
+                    await db.Markdown.create({
                         contentHTML: inputData.contentHTML,
                         contentMarkdown: inputData.contentMarkdown,
                         description: inputData.description,
                         doctorId: inputData.doctorId
                     })
                 } else if (inputData.action === 'EDIT') {
-                    let doctorMarkdown = await db.Markdowns.findOne({
+                    let doctorMarkdown = await db.Markdown.findOne({
                         where: { doctorId: inputData.doctorId },
                         raw: false
                     })
@@ -160,29 +160,29 @@ let getDetailDoctorById = (inputId) => {
                     errMessage: "Missing required parameter!"
                 })
             } else {
-                let data = await db.Users.findOne({
+                let data = await db.User.findOne({
                     where: {
                         id: inputId
                     },
                     attributes: {
                         exclude: ['password']
                     },
-                    // include: lay thong tin cua Users kem theo thong tin user do trong bang Markdowns
+                    // include: lay thong tin cua User kem theo thong tin user do trong bang Markdown
                     include: [
                         {
-                            model: db.Markdowns,
+                            model: db.Markdown,
                             attributes: ['description', 'contentHTML', 'contentMarkdown']
                         },
-                        { model: db.Allcodes, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
                         {
                             model: db.Doctor_Info,
                             attributes: {
                                 exclude: ['id', 'doctorId']
                             },
                             include: [
-                                { model: db.Allcodes, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
-                                { model: db.Allcodes, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
-                                { model: db.Allcodes, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
 
                             ]
                         },
@@ -228,7 +228,7 @@ let bulkCreateSchedule = (data) => {
                     })
                 }
 
-                let existing = await db.Schedules.findAll(
+                let existing = await db.Schedule.findAll(
                     {
                         where: { doctorId: data.doctorId, date: data.formatedDate },
                         attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
@@ -243,7 +243,7 @@ let bulkCreateSchedule = (data) => {
 
                 //create data
                 if (toCreate && toCreate.length > 0) {
-                    await db.Schedules.bulkCreate(toCreate)
+                    await db.Schedule.bulkCreate(toCreate)
                 }
 
                 resolve({
@@ -268,14 +268,14 @@ let getScheduleByDate = (doctorId, date) => {
                     errMessage: 'Missing required parameter!'
                 })
             } else {
-                let data = await db.Schedules.findAll({
+                let data = await db.Schedule.findAll({
                     where: {
                         doctorId: doctorId,
                         date: date
                     },
                     include: [
-                        { model: db.Allcodes, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] },
-                        { model: db.Users, as: 'doctorData', attributes: ['firstName', 'lastName'] },
+                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.User, as: 'doctorData', attributes: ['firstName', 'lastName'] },
 
                     ],
                     raw: false,
@@ -311,9 +311,9 @@ let getExtraInfoDoctorById = (doctorId) => {
                         exclude: ['id', 'doctorId']
                     },
                     include: [
-                        { model: db.Allcodes, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
-                        { model: db.Allcodes, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
-                        { model: db.Allcodes, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
                     ],
                     raw: false,
                     nest: true
@@ -340,29 +340,29 @@ let getProfileDoctorById = (inputId) => {
                     errMessage: 'Missing required parameter!'
                 })
             } else {
-                let data = await db.Users.findOne({
+                let data = await db.User.findOne({
                     where: {
                         id: inputId
                     },
                     attributes: {
                         exclude: ['password']
                     },
-                    // include: lay thong tin cua Users kem theo thong tin user do trong bang Markdowns
+                    // include: lay thong tin cua User kem theo thong tin user do trong bang Markdown
                     include: [
                         {
-                            model: db.Markdowns,
+                            model: db.Markdown,
                             attributes: ['description', 'contentHTML', 'contentMarkdown']
                         },
-                        { model: db.Allcodes, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
                         {
                             model: db.Doctor_Info,
                             attributes: {
                                 exclude: ['id', 'doctorId']
                             },
                             include: [
-                                { model: db.Allcodes, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
-                                { model: db.Allcodes, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
-                                { model: db.Allcodes, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
                             ]
                         },
                     ],
@@ -396,7 +396,7 @@ let getListPaitentForDoctor = (doctorId, date) => {
                     errMessage: 'Missing required parameter!'
                 })
             } else {
-                let data = await db.Bookings.findAll({
+                let data = await db.Booking.findAll({
                     where: {
                         statusId: 'S2',
                         doctorId: doctorId,
@@ -404,14 +404,14 @@ let getListPaitentForDoctor = (doctorId, date) => {
                     },
                     include: [
                         {
-                            model: db.Users, as: 'patientData',
+                            model: db.User, as: 'patientData',
                             attributes: ['email', 'firstName', 'address', 'gender'],
                             include: [
-                                { model: db.Allcodes, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
                             ]
                         },
                         {
-                            model: db.Allcodes, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVi']
+                            model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVi']
                         }
                     ],
                     raw: false,
@@ -439,7 +439,7 @@ let sendRemedy = (data) => {
                 })
             } else {
                 //update patient status
-                let appointment = await db.Bookings.findOne({
+                let appointment = await db.Booking.findOne({
                     where: {
                         doctorId: data.doctorId,
                         patientId: data.patientId,
