@@ -18,7 +18,7 @@ let getTopDoctorHome = (limitInput) => {
                 },
                 include: [
                     { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
-                    { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] }
+                    { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
                 ],
                 raw: true,
                 nest: true
@@ -253,15 +253,7 @@ let bulkCreateSchedule = (data) => {
                     }
                 }
 
-                // //check different
-                // let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                //     return a.timeType === b.timeType && +a.date === +b.date
-                // })
-
-                // //create data
-                // if (toCreate && toCreate.length > 0) {
-                //     await db.Schedule.bulkCreate(toCreate)
-                // }
+                //check different
 
                 resolve({
                     errCode: 0,
@@ -473,7 +465,7 @@ let sendRemedy = (data) => {
                     errCode: 0,
                     errMessage: 'OK'
                 })
-            } 
+            }
         } catch (e) {
             reject(e)
         }
