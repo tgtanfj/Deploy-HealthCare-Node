@@ -237,7 +237,7 @@ let bulkCreateSchedule = (data) => {
                 )
 
                 if (!existing) {
-                    await db.schedule.create({
+                    await db.Schedule.create({
                         date: schedule.date,
                         timeType: schedule.timeType,
                         doctorId: schedule.doctorId
@@ -267,8 +267,6 @@ let bulkCreateSchedule = (data) => {
                     errCode: 0,
                     errMessage: 'OK'
                 })
-
-
             }
         } catch (e) {
             reject(e)
