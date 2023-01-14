@@ -244,7 +244,7 @@ let bulkCreateSchedule = (data) => {
                     })
                 } else {
                     let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                        return a.timeType === b.timeType && +a.date === +b.date
+                        return a.timeType === b.timeType && +a.date == b.date
                     })
 
                     //create data
