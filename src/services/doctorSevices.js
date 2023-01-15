@@ -236,13 +236,24 @@ let bulkCreateSchedule = (data) => {
                     }
                 )
 
-                if (!existing) {
-                    await db.Schedule.create({
-                        date: schedule.date,
-                        timeType: schedule.timeType,
-                        doctorId: schedule.doctorId
-                    })
-                } else {
+                // if (existing.length === 0) {
+                //     await db.Schedule.create({
+                //         date: schedule.date,
+                //         timeType: schedule.timeType,
+                //         doctorId: schedule.doctorId
+                //     })
+                // } else {
+                //     let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+                //         return a.timeType === b.timeType && +a.date === +b.date
+                //     })
+
+                //     //create data
+                //     if (toCreate && toCreate.length > 0) {
+                //         await db.Schedule.bulkCreate(toCreate)
+                //     }
+                // }
+
+                if (existing.length > 0) {
                     let toCreate = _.differenceWith(schedule, existing, (a, b) => {
                         return a.timeType === b.timeType && +a.date === +b.date
                     })
@@ -251,7 +262,15 @@ let bulkCreateSchedule = (data) => {
                     if (toCreate && toCreate.length > 0) {
                         await db.Schedule.bulkCreate(toCreate)
                     }
+
+                } else {
+                    await db.Schedule.create({
+                        date: schedule.date,
+                        timeType: schedule.timeType,
+                        doctorId: schedule.doctorId
+                    })
                 }
+
 
                 //check different
 
